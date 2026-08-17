@@ -1,0 +1,15 @@
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pandas>=2.1.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+shap>=0.44.0
+ortools>=9.8.3296
+requests>=2.31.0
+google-generativeai>=0.3.2
+torch>=2.0.0
+torch_geometric>=2.3.0
+captum>=0.6.0
+networkx>=3.0
+paho-mqtt>=1.6.1
+python-dotenv>=1.0.0

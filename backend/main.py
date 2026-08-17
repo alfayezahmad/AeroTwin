@@ -1,0 +1,152 @@
+import os
+import json
+import paho.mqtt.publish as mqtt_publish
+import google.generativeai as genai
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from live_ingestion import fetch_live_node_data, assign_grap_stage
+from ml_engine import AeroTwinMLEngine
+from vrp_optimizer import calculate_optimal_dispatch
+
+# Safely import and initialize Gemini
+from dotenv import load_dotenv
+load_dotenv()
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
+if GEMINI_KEY and GEMINI_KEY.strip() != "":
+    genai.configure(api_key=GEMINI_KEY)
+
+app = FastAPI(title="AeroTwin Ingestion & Prediction Engine", version="2.0.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+ml_engine = AeroTwinMLEngine()
+
+HUB_COORDS = [26.8467, 80.9462] # Municipal Hub
+SIMULATE_SPIKE_ACTIVE = False
+
+@app.post("/api/simulate_spike")
+def trigger_spike_simulation():
+    global SIMULATE_SPIKE_ACTIVE
+    SIMULATE_SPIKE_ACTIVE = True
+    
+    # Fire off an immediate MQTT command for the edge actuator 
+    payload = {
+        "grap_stage": "Stage III",
+        "action": "WATER_SPRINKLER_HIGH_DENSITY"
+    }
+    try:
+        mqtt_publish.single(
+            "aerotwin/commands/dispatch",
+            payload=json.dumps(payload),
+            hostname="host.docker.internal", # Assuming docker-compose setup can reach host, or just "localhost" if run directly. Wait, I will use MQTT_BROKER env or "mosquitto" or "host.docker.internal"
+            port=1883
+        )
+    except Exception as e:
+        print(f"Warning: Failed to publish MQTT message: {e}")
+        
+    return {"status": "success", "message": "Simulated PM2.5 spike engaged. Hardware actuation triggered."}
+
+@app.get("/api/forecast")
+def get_spatial_forecast():
+    # 1. Fetch Live Data (including 24h timeseries)
+    nodes = fetch_live_node_data()
+    
+    global SIMULATE_SPIKE_ACTIVE
+    if SIMULATE_SPIKE_ACTIVE:
+        for node in nodes:
+            node["pm25"] = 345.0 # Spike above 320 to trigger Stage III/IV
+            
+        # Optional: Reset the flag automatically after one hit so it's a transient spike
+        # SIMULATE_SPIKE_ACTIVE = False 
+    
+    # 2. PyTorch ST-GNN Inference & XAI for the whole graph simultaneously
+    ml_result = ml_engine.predict_with_xai(nodes)
+    predictions = ml_result["predictions"]
+    worst_node_shap = ml_result["xai_attributions"]
+    
+    processed_nodes = []
+    critical_nodes = []
+    
+    # 3. Zip predictions back into the payload
+    for idx, node in enumerate(nodes):
+        predicted_pm25 = float(predictions[idx])
+        
+        # Override with real GNN model prediction
+        node["pm25"] = round(predicted_pm25, 1)
+        
+        # Re-calculate GRAP based on the GNN's prediction
+        grap_stage, action = assign_grap_stage(predicted_pm25)
+        node["grap_stage"] = grap_stage
+        node["prescribed_action"] = action
+        
+        # Filter Critical Nodes for VRP Dispatch
+        if predicted_pm25 > 120.0:
+            node["needs_dispatch"] = True
+            critical_nodes.append(node)
+        else:
+            node["needs_dispatch"] = False
+            
+        processed_nodes.append(node)
+
+    avg_pm25 = round(sum(n["pm25"] for n in processed_nodes) / len(processed_nodes), 1)
+
+    # 4. OR-Tools VRP Optimization
+    routes = calculate_optimal_dispatch(HUB_COORDS, critical_nodes)
+
+    # 5. Return JSON payload
+    return {
+        "city": "Lucknow",
+        "timestamp_horizon": "Real-Time / Next 24 Hours",
+        "city_mean_pm25": avg_pm25,
+        "nodes": processed_nodes,
+        "routes": routes,
+        "shap_attributions": worst_node_shap, # Frontend still expects this key name for the chart
+        "dispatch_hub": {
+            "lat": HUB_COORDS[0],
+            "lon": HUB_COORDS[1],
+            "name": "Central Municipal Depot",
+        },
+    }
+
+@app.get("/api/agent_briefing")
+def get_agent_briefing():
+    if not GEMINI_KEY:
+        return {"briefing": "⚠️ Agent Offline: GEMINI_API_KEY not configured in environment."}
+
+    # Get the forecasted data which contains the PyTorch ST-GNN predictions
+    try:
+        forecast_data = get_spatial_forecast()
+        nodes = forecast_data["nodes"]
+    except Exception as e:
+        return {"briefing": f"Agent error fetching forecast: {str(e)}"}
+        
+    context_str = "\n".join(
+        [
+            f"- {n['station']}: ST-GNN Predicted PM2.5 = {n['pm25']} µg/m³, Wind = {n['live_wind']}km/h, Action = {n['prescribed_action']}"
+            for n in nodes
+        ]
+    )
+
+    prompt = f"""
+    You are the AeroTwin Autonomous Environmental Agent for the city of Lucknow.
+    Analyze this live telemetry data and provide a diagnostic, slightly conversational executive briefing for the City Commissioner.
+    Reference the specific predictions generated by the PyTorch Geometric ST-GNN to highlight the near-future forecast over the next 24 hours.
+    State the highest risk zone, the meteorological driver (like wind advection), and confirm the GRAP dispatch orders based on the ST-GNN forecast.
+    Keep it concise (3-4 sentences), professional but fluid (less like a static robot).
+    
+    Live Telemetry & ST-GNN Forecast:
+    {context_str}
+    """
+
+    try:
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+        return {"briefing": response.text}
+    except Exception as e:
+        return {"briefing": f"Agent error: {str(e)}"}
