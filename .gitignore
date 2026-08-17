@@ -20,6 +20,7 @@ pip-delete-this-directory.txt
 .env
 .env.local
 .env.*
+!.env.example
 
 # Local Edge Databases 
 *.db
