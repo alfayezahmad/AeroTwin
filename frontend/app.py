@@ -102,9 +102,11 @@ st.markdown(
     /* Tactical Telemetry Card Grid */
     .tactical-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
         margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
     }
     .tactical-card {
         background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
@@ -113,6 +115,7 @@ st.markdown(
         padding: 10px 12px;
         box-sizing: border-box;
         transition: border-color 0.2s ease;
+        width: 100%;
     }
     .tactical-card:hover {
         border-color: #00e5ff;
@@ -346,8 +349,8 @@ active_dispatches = sum(1 for n in nodes if n["needs_dispatch"])
 inference_latency = random.randint(45, 85)
 ibm_infra = data.get("ibm_infrastructure", {})
 
-# Create main functional zones (30% Left Rail, 70% Right Canvas)
-col_left, col_right = st.columns([3, 7])
+# Create main functional zones (35% Left Rail, 65% Right Canvas)
+col_left, col_right = st.columns([3.5, 6.5])
 
 with col_left:
     st.markdown("<h4 style='font-weight:400; color:#e5e7eb;'>TACTICAL TELEMETRY</h4>", unsafe_allow_html=True)
@@ -398,7 +401,7 @@ with col_left:
             <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">✓ Trustworthy AI</span>
         </div>
     </div>
-    <div class="tactical-card" style="border-left: 3px solid #00e5ff; margin-bottom: 12px;">
+    <div class="tactical-card" style="border-left: 3px solid #00e5ff; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <div class="tactical-label">ST-GNN Inference Latency</div>
@@ -407,17 +410,13 @@ with col_left:
             <span class="tactical-badge" style="background: rgba(0, 229, 255, 0.15); color: #67e8f9; border: 1px solid rgba(0, 229, 255, 0.4);">⚡ Real-Time Compute</span>
         </div>
     </div>
+    <div style="background: rgba(255, 153, 0, 0.08); border: 1px solid #374151; border-left: 3px solid #ff9900; padding: 10px 12px; border-radius: 6px; font-family: monospace; font-size: 0.75rem; color: #d1d5db; width: 100%; box-sizing: border-box;">
+        <div style="margin-bottom: 4px;"><span style="color:#ff9900; font-weight:bold;">IBM RUNTIME:</span> {ibm_infra.get('ibm_mode', 'Red Hat OpenShift & Watsonx (Autonomous Twin)')}</div>
+        <div style="margin-bottom: 4px;"><span style="color:#ff9900; font-weight:bold;">STORAGE:</span> {ibm_infra.get('storage', 'Cloud-Native Ledger & Time-Series Data Lake')}</div>
+        <div><span style="color:#ff9900; font-weight:bold;">ACTUATION:</span> {ibm_infra.get('actuation', 'Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon')}</div>
+    </div>
     """
     st.markdown(telemetry_cards_html, unsafe_allow_html=True)
-    
-    # IBM Infrastructure Status Banner
-    st.markdown(f"""
-    <div style="background: rgba(255, 153, 0, 0.08); border-left: 3px solid #ff9900; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; color: #d1d5db; margin-top: 10px;">
-        <span style="color:#ff9900; font-weight:bold;">IBM RUNTIME:</span> {ibm_infra.get('ibm_mode', 'Red Hat OpenShift & Watsonx (Autonomous Twin)')} <br/>
-        <span style="color:#ff9900; font-weight:bold;">STORAGE:</span> {ibm_infra.get('storage', 'Cloud-Native Ledger & Time-Series Data Lake')} <br/>
-        <span style="color:#ff9900; font-weight:bold;">ACTUATION:</span> {ibm_infra.get('actuation', 'Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon')}
-    </div>
-    """, unsafe_allow_html=True)
     
     st.markdown("<hr style='margin: 1rem 0 !important;'>", unsafe_allow_html=True)
     
