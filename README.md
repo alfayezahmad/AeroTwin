@@ -34,12 +34,12 @@ AeroTwin solves this by predicting pollution drift *before* it happens and autom
 ---
 
 ## Key Features & Innovation
-- **Autonomous Forecasting**: Real-time integration with Open-Meteo REST APIs feeds a PyTorch Geometric ST-GNN to predict spatial pollution drift 24 hours into the future.
-- **Explainable AI (XAI) & AI Ethics**: To ensure algorithmic transparency and trustworthy AI in municipal decision-making, PyTorch Captum integration provides real-time SHAP feature attributions. This demystifies the "black-box" ST-GNN by mathematically proving which exact environmental variables (e.g., wind advection, CO levels) drove a specific PM2.5 forecast, ensuring that high-stakes statutory dispatches are legally defensible and auditable.
-- **Cloud-Native Microservices Architecture**: Built for massive municipal scalability, the system decouples the inference engine (FastAPI), frontend (Streamlit), and edge-communications (MQTT) into isolated Docker containers, aligning with enterprise hybrid-cloud deployment standards.
-- **Gemini LLM Diagnostics**: A continuously polling generative AI agent analyzes the GNN matrix output and formulates fluid, executive-level briefings for municipal commissioners.
-- **VRP Fleet Routing**: Google OR-Tools dynamically calculate the most efficient dispatch routes for emergency mitigation vehicles to reach critical nodes (PM2.5 > 120 µg/m³).
-- **Physical Edge Actuation**: Triggering a GRAP Stage III/IV event automatically dispatches MQTT payloads to local Edge Gateways, which utilize GPIO PWM signals to physically rotate servo valves and activate mist cannons.
+- **Autonomous Spatio-Temporal Forecasting**: Real-time integration with Open-Meteo APIs feeds a PyTorch Geometric ST-GNN to predict spatial pollution drift 24 hours into the future across disaggregated urban microclimate typologies (industrial clusters, transit corridors, commercial cores).
+- **Explainable AI (XAI) & Algorithmic Trust (IBM Trustworthy AI)**: Aligned with IBM's principles of Trustworthy AI and algorithmic governance, PyTorch Captum integration provides real-time SHAP feature attributions. This demystifies the "black-box" neural network by mathematically proving which environmental variables (e.g., wind advection, thermal inversions, CO concentrations) drove a forecast, ensuring that high-stakes municipal interventions are transparent, auditable, and legally defensible.
+- **Cloud-Native Enterprise Architecture (IBM Cloud / Red Hat OpenShift Ready)**: Engineered for municipal scalability, the system decouples deep learning inference (FastAPI), tactical spatial command visualization (Streamlit), and asynchronous edge telemetry (Eclipse Mosquitto) into isolated containerized microservices ready for enterprise hybrid-cloud deployment.
+- **Generative AI Commissioner Briefings**: Continuously translates complex multi-dimensional GNN prediction tensors into concise, fluid executive briefings for city commissioners, outlining risk corridors and confirming statutory GRAP mandates.
+- **Constrained Operations Research VRP Routing**: Google OR-Tools dynamically solves the Vehicle Routing Problem (VRP) to calculate optimal mitigation fleet trajectories from the Central Municipal Depot to intercept critical pollution plumes (PM2.5 > 120 µg/m³).
+- **Closed-Loop Cyber-Physical Actuation**: Transcends passive dashboards by maintaining physical control over municipal hardware. Statutory emergency triggers immediately dispatch MQTT payloads to ESP32-S3 edge nodes, driving physical pumps and mist cannons via PWM/motor drivers in the field.
 
 ---
 
@@ -47,25 +47,27 @@ AeroTwin solves this by predicting pollution drift *before* it happens and autom
 
 ```mermaid
 graph TD
-    subgraph Data Ingestion Layer
+    subgraph Data Ingestion & Microclimate Layer
         A[Open-Meteo REST API] -->|PM2.5, CO, Temp, Wind| B(FastAPI Backend)
-        B --> C{Data Normalization & Scaling}
+        B --> C{Urban Typology Disaggregation}
     end
 
     subgraph Deep Learning Inference Engine
         C -->|Node Features & Edge Attributes| D[PyTorch Geometric ST-GNN]
-        D -->|Predicted PM2.5 Horizon| E[Captum XAI Engine]
+        D -->|Predicted PM2.5 Horizon| E[Captum XAI Feature Attribution]
     end
     
-    subgraph Operations Research
+    subgraph Operations Research & Tactical UI
         E -->|Critical Nodes > 120 µg/m³| F[Google OR-Tools VRP Optimizer]
-        F -->|Optimal Dispatch Routes| G(Live Streamlit Dashboard)
+        F -->|Optimal Dispatch Routes| G(Streamlit Command Center)
+        E -->|Executive Briefing Request| H[Generative AI Diagnostic Agent]
+        H -->|Actionable Directives| G
     end
 
-    subgraph Cyber-Physical Edge Actuation
-        E -->|Statutory Threshold Trigger| H[Mosquitto MQTT Broker]
-        H -->|Downlink JSON Payload| I[ESP32 Edge Gateway]
-        I -->|PWM / GPIO Signals| J[Relay Valves & Servo Motors]
+    subgraph Closed-Loop Cyber-Physical Edge Actuation
+        E -->|Statutory GRAP Trigger| I[Mosquitto MQTT Broker]
+        I -->|Downlink JSON Payload| J[ESP32-S3 Edge Node]
+        J -->|FreeRTOS Task & GPIO Signals| K[L293D Motor Driver & WS2812 NeoPixel]
     end
 ```
 
@@ -161,7 +163,13 @@ docker compose up -d --build
 - **FastAPI Backend & API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Mosquitto MQTT Broker**: `localhost:1883`
 
-### 3. Flash ESP32-S3 Edge Actuator (Optional Hardware Step)
+### 3. Verify Closed-Loop Hardware & Pipeline
+Open the Streamlit Command Center at [http://localhost:8501](http://localhost:8501):
+- **⚡ Spike Test**: Click the sidebar test trigger. This simulates an acute atmospheric PM2.5 surge, calculates emergency VRP mitigation routes from the Central Municipal Depot, and broadcasts an emergency MQTT downlink command (`WATER_SPRINKLER_HIGH_DENSITY`, `Stage IV`) to `aerotwin/commands/dispatch`.
+- **Physical Actuation Feedback**: If the ESP32-S3 edge node is connected, its onboard WS2812 NeoPixel (GPIO 48) illuminates RED and the L293D motor driver (GPIO 4 & 5) engages the water cannon/sprinkler pump for a non-blocking 10-second mitigation cycle.
+- **🔄 Reset Live**: Click the reset trigger to restore live ambient telemetry and broadcast a `STANDBY` command to edge actuators.
+
+### 4. Flash ESP32-S3 Edge Actuator (Optional Hardware Step)
 To flash the native actuator firmware onto an ESP32-S3 board:
 ```bash
 cd esp32_edge_actuator
