@@ -129,17 +129,17 @@ active_dispatches = sum(1 for n in nodes if n["needs_dispatch"])
 inference_latency = random.randint(45, 85)
 
 # Create main functional zones (30% Left Rail, 70% Right Canvas)
-col_left, col_right = st.columns([3, 7])
+col_left, col_right = st.columns([3, 7], gap="large")
 
 with col_left:
     st.markdown("<h4 style='font-weight:400; color:#e5e7eb;'>TACTICAL FEED</h4>", unsafe_allow_html=True)
     
     # High-level Metrics (stacked in 2x2 grid for neatness within the rail)
-    m1, m2 = st.columns(2)
+    m1, m2 = st.columns(2, gap="large")
     m1.metric("Pred. Mean (µg/m³)", f"{mean_pm25}", "- ST-GNN Inference", delta_color="inverse")
     m2.metric("Active Nodes", f"{len(df)}", "Online", delta_color="normal")
     
-    m3, m4 = st.columns(2)
+    m3, m4 = st.columns(2, gap="large")
     m3.metric("Fleet Dispatches", f"{active_dispatches}", "Active VRP", delta_color="inverse")
     m4.metric("Engine Status", "ONLINE", "PyTorch Geometric", delta_color="normal")
     
@@ -174,7 +174,7 @@ with col_left:
     display_df = df[["station", "pm25", "grap_stage", "prescribed_action"]].copy()
     display_df["prescribed_action"] = display_df["prescribed_action"].str.replace("_", " ").str.title()
     
-    table_html = "<div style='background-color: #0e1117; border: 1px solid #1e1e24; border-radius: 6px; padding: 10px;'><table style='width:100%; border-collapse: collapse; font-size: 0.80rem; color: #d1d5db; font-family: Inter, sans-serif;'>"
+    table_html = "<div style='background-color: #0e1117; border: 1px solid #1e1e24; border-radius: 6px; padding: 10px; overflow-x: auto;'><table style='width:100%; border-collapse: collapse; font-size: 0.80rem; color: #d1d5db; font-family: Inter, sans-serif; white-space: nowrap;'>"
     table_html += "<tr style='border-bottom: 1px solid #374151; color: #9ca3af; text-transform: uppercase;'><th style='text-align:left; padding:8px 4px;'>Node</th><th style='text-align:left; padding:8px 4px;'>PM2.5</th><th style='text-align:left; padding:8px 4px;'>Status</th><th style='text-align:left; padding:8px 4px;'>Intervention</th></tr>"
     for _, row in display_df.iterrows():
         status = row['grap_stage']
@@ -277,7 +277,7 @@ with col_right:
     # 2-Row Chart Layout for the Right Canvas
     
     # ROW 1: Severity Ranking and XAI
-    chart_c1, chart_c2 = st.columns(2)
+    chart_c1, chart_c2 = st.columns(2, gap="large")
     
     with chart_c1:
         st.markdown("<h5 style='font-weight:400; color:#e5e7eb;'>NODE SEVERITY RANKING</h5>", unsafe_allow_html=True)
@@ -289,7 +289,7 @@ with col_right:
             color="pm25",
             color_continuous_scale="Reds",
         )
-        fig.update_traces(texttemplate='%{x} µg/m³', textposition="outside", cliponaxis=False)
+        fig.update_traces(texttemplate='<b>%{x}</b> µg/m³', textposition="outside", cliponaxis=False, marker_line_color='#000000', marker_line_width=1, opacity=0.9)
         fig.update_layout(
             font=dict(family="Inter", size=11, color="#9ca3af"),
             plot_bgcolor="rgba(0,0,0,0)",
@@ -315,7 +315,7 @@ with col_right:
             importance = [0]
 
         fig_ml = px.bar(x=importance, y=features, orientation="h")
-        fig_ml.update_traces(marker_color="#00e5ff", texttemplate='%{x}%', textposition="outside", cliponaxis=False)
+        fig_ml.update_traces(marker_color="#00e5ff", texttemplate='<b>%{x}</b>%', textposition="outside", cliponaxis=False, marker_line_color='#000000', marker_line_width=1, opacity=0.9)
         fig_ml.update_layout(
             font=dict(family="Inter", size=11, color="#9ca3af"),
             plot_bgcolor="rgba(0,0,0,0)",
@@ -394,8 +394,8 @@ with col_right:
             ),
             height=300,
         )
-        # Apply distinct colored lines for neon aesthetic
-        fig_timeline.update_traces(line=dict(width=2))
+        # Apply distinct colored lines for neon aesthetic, with spline curves
+        fig_timeline.update_traces(line=dict(width=3), line_shape='spline', mode='lines+markers', marker=dict(size=4))
         
         st.plotly_chart(fig_timeline, use_container_width=True, config={"displayModeBar": False})
     else:
