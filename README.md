@@ -49,31 +49,56 @@ AeroTwin operates as a closed-loop Cyber-Physical System (CPS), bridging real-ti
 
 ```mermaid
 flowchart LR
-    A["Open-Meteo API\n(Telemetry)"] --> B["PyTorch ST-GNN\n(Forecasting)"]
-    B --> C["Captum XAI\n(SHAP / Trust)"]
-    C --> D["OR-Tools VRP\n(Fleet Routing)"]
-    D --> E["3D Command Center\n(Streamlit / PyDeck)"]
-    C -.->|GRAP Trigger| F["Mosquitto MQTT\n(Broker: 1883)"]
-    F --> G["ESP32-S3 Node\n(ESP-IDF / FreeRTOS)"]
-    G --> H["Mist Cannon\n(L293D / WS2812)"]
+    subgraph INGEST["1. Telemetry Ingestion"]
+        direction TB
+        A["<b>Open-Meteo REST API</b><br/>PM2.5, CO, Temp, Wind"]
+        B["<b>Urban Typology Engine</b><br/>5 Microclimate Profiles"]
+        A --> B
+    end
 
-    classDef default fill:#111827,stroke:#374151,color:#e5e7eb,font-size:12px;
-    classDef ai fill:#0b192c,stroke:#00e5ff,color:#38bdf8,stroke-width:1.5px;
-    classDef ops fill:#064e3b,stroke:#34d399,color:#6ee7b7,stroke-width:1.5px;
-    classDef edge fill:#3a1010,stroke:#f87171,color:#fca5a5,stroke-width:1.5px;
+    subgraph AI["2. Deep Learning & Trustworthy AI (IBM)"]
+        direction TB
+        C["<b>PyTorch Geometric ST-GNN</b><br/>Wind-Modulated Message Passing"]
+        D["<b>Captum XAI Attribution</b><br/>Auditable SHAP Feature Importance"]
+        C --> D
+    end
 
-    class A default;
-    class B,C ai;
-    class D,E ops;
-    class F,G,H edge;
+    subgraph COMMAND["3. Operations Research & Tactical UI"]
+        direction TB
+        E["<b>Google OR-Tools VRP</b><br/>Constrained Depot Routing"]
+        F["<b>Streamlit Command Center</b><br/>3D PyDeck Spatial Digital Twin"]
+        E --> F
+    end
+
+    subgraph EDGE["4. Cyber-Physical Actuation"]
+        direction TB
+        G["<b>Mosquitto MQTT Broker</b><br/>Topic: aerotwin/commands/dispatch"]
+        H["<b>ESP32-S3 Edge Node</b><br/>FreeRTOS Task & L293D Mist Cannon"]
+        G --> H
+    end
+
+    B --> C
+    D -->|Plume > 120 µg/m³| E
+    D -.->|Statutory Trigger| G
+
+    classDef default fill:#0f172a,stroke:#334155,color:#e2e8f0,font-size:12px;
+    classDef ingest fill:#0b192c,stroke:#00e5ff,stroke-width:1.5px,color:#f8fafc;
+    classDef aiStyle fill:#1e1b4b,stroke:#818cf8,stroke-width:1.5px,color:#f8fafc;
+    classDef opsStyle fill:#064e3b,stroke:#34d399,stroke-width:1.5px,color:#f8fafc;
+    classDef edgeStyle fill:#3a1010,stroke:#f87171,stroke-width:1.5px,color:#f8fafc;
+
+    class A,B ingest;
+    class C,D aiStyle;
+    class E,F opsStyle;
+    class G,H edgeStyle;
 ```
 
-| Layer | Core Stack | Responsibilities |
-| :--- | :--- | :--- |
-| **Ingestion** | Open-Meteo REST API, Pandas | Atmospheric telemetry disaggregated across urban microclimate typologies |
-| **Inference (IBM)** | PyTorch Geometric, Captum XAI | ST-GNN 24h particulate forecasting + auditable SHAP feature attribution |
-| **Operations** | Google OR-Tools, Streamlit, PyDeck | Optimal VRP mitigation fleet trajectories + tactical 3D digital twin UI |
-| **Edge Actuation** | ESP-IDF (C), FreeRTOS, Mosquitto | Event-driven MQTT downlink actuating field mist cannon motor & status LED |
+| Subsystem Layer | Core Technologies | Protocol / Interface | Responsibilities |
+| :--- | :--- | :--- | :--- |
+| **1. Ingestion** | Open-Meteo REST API, Pandas | HTTP REST / JSON | Disaggregates regional atmospheric readings across 5 urban typologies |
+| **2. Inference (IBM)** | PyTorch Geometric, Captum XAI | Tensor Core / CPU Batch | Predicts 24h particulate advection; calculates auditable SHAP attributions |
+| **3. Operations** | Google OR-Tools, Streamlit, PyDeck | Inter-Process / WebSocket | Solves constrained VRP fleet routes; renders tactical 3D digital twin |
+| **4. Edge Actuation** | ESP-IDF (C), FreeRTOS, Mosquitto | MQTT (1883) / GPIO PWM | Transmits event downlinks; actuates physical L293D mist cannon & status LED |
 
 
 ## Mathematical & Algorithmic Foundations
