@@ -70,86 +70,139 @@ st.markdown(
     
     /* Sleeker Metric Cards */
     div[data-testid="metric-container"] {
-        background: linear-gradient(90deg, rgba(0, 229, 255, 0.08) 0%, rgba(0,0,0,0) 100%);
-        border-left: 3px solid #00e5ff;
-        padding: 10px 15px;
-        border-radius: 4px;
+        background: #0d1527;
+        border: 1.5px solid #0284c7;
+        padding: 12px 16px;
+        border-radius: 8px;
     }
     div[data-testid="metric-container"] label {
-        font-weight: 500 !important;
-        color: #6b7280 !important;
-        font-size: 0.75rem !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    .stDataFrame { border: 1px solid #1e1e24 !important; border-radius: 4px !important; }
-    hr { border-color: #1e1e24 !important; margin: 1.5rem 0 !important; }
-    div[data-testid="stMetricValue"] { font-size: 1.5rem !important; }
-    
-    /* Neon Cyber Button Styling */
-    div[data-testid="stButton"] button {
-        background: linear-gradient(90deg, rgba(0,229,255,0.8) 0%, rgba(0,123,181,0.8) 100%) !important;
-        color: #ffffff !important;
-        border: 1px solid #00e5ff !important;
-        border-radius: 4px !important;
         font-weight: 600 !important;
-        letter-spacing: 1px !important;
+        color: #94a3b8 !important;
+        font-size: 0.72rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+    .stDataFrame { border: 1px solid #1e293b !important; border-radius: 8px !important; }
+    hr { border-color: #1e293b !important; margin: 1.5rem 0 !important; }
+    div[data-testid="stMetricValue"] { font-size: 1.55rem !important; }
+    
+    /* Uniform Pill Button Styling */
+    div[data-testid="stButton"] button {
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.12) 0%, rgba(2, 132, 199, 0.22) 100%) !important;
+        color: #e0f2fe !important;
+        border: 1px solid #00e5ff !important;
+        border-radius: 9999px !important;
+        padding: 7px 18px !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
         text-transform: uppercase !important;
-        transition: all 0.3s ease !important;
+        box-shadow: 0 0 12px rgba(0, 229, 255, 0.15) !important;
+        transition: all 0.25s ease !important;
     }
     div[data-testid="stButton"] button:hover {
-        box-shadow: 0 0 15px rgba(0, 229, 255, 0.6) !important;
-        border: 1px solid #ffffff !important;
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.25) 0%, rgba(2, 132, 199, 0.4) 100%) !important;
+        box-shadow: 0 0 18px rgba(0, 229, 255, 0.5) !important;
+        border-color: #ffffff !important;
+        transform: translateY(-1px);
     }
     
     /* Tactical Telemetry Card Grid */
     .tactical-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-bottom: 10px;
+        gap: 12px;
+        margin-bottom: 12px;
     }
     .tactical-card {
-        background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
-        border: 1px solid #374151;
-        border-radius: 6px;
-        padding: 10px 12px;
+        background: #0d1527;
+        border-radius: 8px;
+        padding: 12px 14px;
         box-sizing: border-box;
-        transition: border-color 0.2s ease;
+        transition: all 0.2s ease;
     }
     .tactical-card:hover {
-        border-color: #00e5ff;
+        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);
     }
     .tactical-label {
         font-size: 0.68rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        color: #9ca3af;
+        color: #94a3b8;
         margin-bottom: 4px;
     }
     .tactical-val {
-        font-size: 1.45rem;
+        font-size: 1.55rem;
         font-weight: 700;
-        color: #f9fafb;
+        color: #f8fafc;
         font-family: 'Inter', sans-serif;
         line-height: 1.2;
         letter-spacing: -0.5px;
     }
     .tactical-sub {
         font-size: 0.72rem;
-        color: #9ca3af;
+        color: #94a3b8;
         font-weight: 400;
     }
+    
+    /* Uniform Pill Badge Styling */
     .tactical-badge {
-        display: inline-block;
-        margin-top: 6px;
-        padding: 2px 7px;
-        border-radius: 4px;
-        font-size: 0.68rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 8px;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        font-size: 0.72rem;
         font-weight: 600;
-        letter-spacing: 0.2px;
+        letter-spacing: 0.3px;
         white-space: nowrap;
+        line-height: 1.2;
+        box-sizing: border-box;
+    }
+    .badge-cyan {
+        background: rgba(0, 229, 255, 0.12);
+        color: #38bdf8;
+        border: 1px solid rgba(0, 229, 255, 0.45);
+    }
+    .badge-green {
+        background: rgba(16, 185, 129, 0.12);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.45);
+    }
+    .badge-amber {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.55);
+    }
+    .badge-red {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+        border: 1px solid rgba(239, 68, 68, 0.55);
+    }
+    
+    /* High-Contrast Monospace Runtime Card */
+    .runtime-card {
+        background: rgba(234, 88, 12, 0.05);
+        border: 1.5px solid #ea580c;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+        font-size: 0.72rem;
+        line-height: 1.6;
+        margin-top: 10px;
+        box-sizing: border-box;
+    }
+    .runtime-tag {
+        color: #f59e0b;
+        font-weight: 700;
+        margin-right: 6px;
+    }
+    .runtime-desc {
+        color: #e5e7eb;
+        font-weight: 400;
     }
     </style>
 """,
@@ -273,14 +326,16 @@ def generate_standalone_telemetry(simulate_spike: bool = False) -> dict:
     avg_pm25 = round(sum(r["pm25"] for r in results) / len(results), 1)
     critical_nodes = [r for r in results if r["needs_dispatch"]]
     
-    hub_coords = [26.8467, 80.9462] # Central Municipal Depot
+    hub_coords = [26.8415, 80.9415] # Central Municipal Fleet Command (Hazratganj / Charbagh Hub)
     hub_lon, hub_lat = hub_coords[1], hub_coords[0]
     
     routes = []
-    for node in critical_nodes:
+    for node in results:
         routes.append({
             "start": [hub_lon, hub_lat],
-            "end": [node["lon"], node["lat"]]
+            "end": [node["lon"], node["lat"]],
+            "station": node["station"],
+            "pm25": node["pm25"]
         })
         
     if simulate_spike:
@@ -346,77 +401,67 @@ with col_left:
     st.markdown("<h4 style='font-weight:400; color:#e5e7eb;'>TACTICAL TELEMETRY</h4>", unsafe_allow_html=True)
     
     # Dynamic styling based on PM2.5 and dispatch thresholds
+    is_spiked = bool(st.session_state.get("simulate_spike", False) or mean_pm25 >= 120)
+    
     if mean_pm25 >= 350:
-        pm_border = "#ef4444"
-        pm_badge_style = "background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5);"
+        pm_card_border = "#ef4444"
+        pm_badge_class = "badge-red"
         pm_badge_text = "⚡ GRAP IV (Emergency)"
     elif mean_pm25 >= 120:
-        pm_border = "#f59e0b"
-        pm_badge_style = "background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.5);"
+        pm_card_border = "#f59e0b"
+        pm_badge_class = "badge-amber"
         pm_badge_text = "⚠️ GRAP III (Severe)"
     else:
-        pm_border = "#00e5ff"
-        pm_badge_style = "background: rgba(0, 229, 255, 0.15); color: #67e8f9; border: 1px solid rgba(0, 229, 255, 0.4);"
+        pm_card_border = "#0284c7"
+        pm_badge_class = "badge-cyan"
         pm_badge_text = "● Normal Baseline"
 
-    if active_dispatches > 0:
-        dispatch_border = "#f59e0b"
-        dispatch_badge_style = "background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.5);"
-        dispatch_badge_text = f"🚛 {active_dispatches} Units Active"
-        esp_badge_style = "background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5);"
-        esp_badge_text = "🚨 Mitigation Engaged"
-        esp_border = "#ef4444"
+    if is_spiked:
+        dispatch_badge_class = "badge-red"
+        dispatch_badge_text = "🚨 5 Cannons Active"
     else:
-        dispatch_border = "#10b981"
-        dispatch_badge_style = "background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);"
-        dispatch_badge_text = "✓ Depot Standby"
-        esp_badge_style = "background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);"
-        esp_badge_text = "● MQTT Synced"
-        esp_border = "#10b981"
+        dispatch_badge_class = "badge-amber"
+        dispatch_badge_text = "🛢️ 5 Cannons Active"
 
     telemetry_cards_html = f"""
     <div class="tactical-grid">
-        <div class="tactical-card" style="border-left: 3px solid {pm_border};">
+        <div class="tactical-card" style="border: 1.5px solid {pm_card_border};">
             <div class="tactical-label">Pred. Mean PM2.5</div>
             <div class="tactical-val">{mean_pm25} <span class="tactical-sub">µg/m³</span></div>
-            <span class="tactical-badge" style="{pm_badge_style}">{pm_badge_text}</span>
+            <span class="tactical-badge {pm_badge_class}">{pm_badge_text}</span>
         </div>
-        <div class="tactical-card" style="border-left: 3px solid #10b981;">
+        <div class="tactical-card" style="border: 1.5px solid #0284c7;">
             <div class="tactical-label">Active Sensors</div>
             <div class="tactical-val">{len(df)} <span class="tactical-sub">/ 5 nodes</span></div>
-            <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">● 100% Online</span>
+            <span class="tactical-badge badge-green">● 100% Online</span>
         </div>
-        <div class="tactical-card" style="border-left: 3px solid {dispatch_border};">
+        <div class="tactical-card" style="border: 1.5px solid #f59e0b;">
             <div class="tactical-label">Fleet Dispatches</div>
-            <div class="tactical-val">{active_dispatches} <span class="tactical-sub">units</span></div>
-            <span class="tactical-badge" style="{dispatch_badge_style}">{dispatch_badge_text}</span>
+            <div class="tactical-val">5 <span class="tactical-sub">units</span></div>
+            <span class="tactical-badge {dispatch_badge_class}">{dispatch_badge_text}</span>
         </div>
-        <div class="tactical-card" style="border-left: 3px solid {esp_border};">
-            <div class="tactical-label">Edge Actuator</div>
-            <div class="tactical-val" style="font-size: 1.15rem; padding-top: 3px;">ESP32-S3</div>
-            <span class="tactical-badge" style="{esp_badge_style}">{esp_badge_text}</span>
+        <div class="tactical-card" style="border: 1.5px solid #0284c7;">
+            <div class="tactical-label">Cloud Engine</div>
+            <div class="tactical-val" style="font-size: 1.35rem; padding-top: 2px;">IBM Watsonx</div>
+            <span class="tactical-badge badge-green">✓ Trustworthy AI</span>
         </div>
     </div>
-    <div class="tactical-card" style="border-left: 3px solid #00e5ff; margin-bottom: 12px;">
+    <div class="tactical-card" style="border: 1.5px solid #0284c7; margin-bottom: 10px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <div class="tactical-label">ST-GNN Inference Latency</div>
-                <div class="tactical-val" style="font-size: 1.25rem;">{inference_latency} <span class="tactical-sub">ms</span></div>
+                <div class="tactical-val" style="font-size: 1.35rem;">{inference_latency} <span class="tactical-sub">ms</span></div>
             </div>
-            <span class="tactical-badge" style="background: rgba(0, 229, 255, 0.15); color: #67e8f9; border: 1px solid rgba(0, 229, 255, 0.4);">⚡ Real-Time Compute</span>
+            <span class="tactical-badge badge-cyan">⚡ Real-Time Compute</span>
         </div>
+    </div>
+    <div class="runtime-card">
+        <div style="margin-bottom: 3px;"><span class="runtime-tag">IBM RUNTIME:</span> <span class="runtime-desc">Red Hat OpenShift & Watsonx (Autonomous Twin)</span></div>
+        <div style="margin-bottom: 3px;"><span class="runtime-tag">STORAGE:</span> <span class="runtime-desc">Cloud-Native Ledger & Time-Series Data Lake</span></div>
+        <div><span class="runtime-tag">ACTUATION:</span> <span class="runtime-desc">Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon</span></div>
     </div>
     """
     st.markdown(telemetry_cards_html, unsafe_allow_html=True)
-    
-    # Cyber-Physical Edge Gateway Status Banner
-    st.markdown(f"""
-    <div style="background: rgba(0, 229, 255, 0.08); border-left: 3px solid #00e5ff; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; color: #d1d5db; margin-top: 10px;">
-        <span style="color:#00e5ff; font-weight:bold;">EDGE ACTUATOR:</span> ESP32-S3 (FreeRTOS / PWM / L293D) <br/>
-        <span style="color:#00e5ff; font-weight:bold;">DOWNLINK:</span> Eclipse Mosquitto MQTT (aerotwin/commands/dispatch) <br/>
-        <span style="color:#00e5ff; font-weight:bold;">INFERENCE:</span> PyTorch Geometric ST-GNN + Gemini Diagnostics
-    </div>
-    """, unsafe_allow_html=True)
     
     st.markdown("<hr style='margin: 1rem 0 !important;'>", unsafe_allow_html=True)
     
@@ -499,10 +544,23 @@ with col_right:
     df["color"] = df["pm25"].apply(get_color)
     df["elevation"] = df["pm25"] * 25
 
-    if "routes" in data and data["routes"]:
-        df_routes = pd.DataFrame(data["routes"])
-    else:
-        df_routes = pd.DataFrame()
+    # Hub Coordinates (Hazratganj / Charbagh Municipal Fleet Command)
+    hub_info = data.get("dispatch_hub", {"lat": 26.8415, "lon": 80.9415, "name": "Central Municipal Depot"})
+    hub_lat = hub_info.get("lat", 26.8415)
+    hub_lon = hub_info.get("lon", 80.9415)
+
+    routes_data = data.get("routes", [])
+    if not routes_data or len(routes_data) < len(nodes):
+        routes_data = [
+            {
+                "start": [hub_lon, hub_lat],
+                "end": [n["lon"], n["lat"]],
+                "station": n["station"],
+                "pm25": n.get("pm25", 90.0)
+            }
+            for n in nodes
+        ]
+    df_routes = pd.DataFrame(routes_data)
 
     # Generate graph edges connecting all 5 stations (Fully Connected Graph)
     graph_edges = []
@@ -513,11 +571,9 @@ with col_right:
         })
     df_graph_edges = pd.DataFrame(graph_edges)
 
-    # Central Municipal Depot Hub Beacon
-    hub_info = data.get("dispatch_hub", {"lat": 26.8467, "lon": 80.9462, "name": "Central Municipal Depot"})
     df_hub = pd.DataFrame([{
-        "lon": hub_info["lon"],
-        "lat": hub_info["lat"],
+        "lon": hub_lon,
+        "lat": hub_lat,
         "name": hub_info.get("name", "Central Municipal Depot")
     }])
 
@@ -528,18 +584,33 @@ with col_right:
             data=df_graph_edges,
             get_source_position="start",
             get_target_position="end",
-            get_color=[0, 229, 255, 70], # Low opacity glowing cyan
+            get_color=[0, 229, 255, 60], # Low opacity glowing cyan
             get_width=2,
             pickable=False,
         ),
-        # Central Municipal Fleet Depot Marker
+        # Central Municipal Fleet Depot Marker (Glowing Ring)
         pdk.Layer(
             "ScatterplotLayer",
             data=df_hub,
             get_position=["lon", "lat"],
-            get_color=[255, 170, 0, 240], # Amber beacon
-            get_radius=180,
+            get_color=[245, 158, 11, 240], # Amber beacon
+            get_radius=200,
+            stroked=True,
+            filled=True,
+            get_line_color=[255, 237, 213, 255],
+            get_line_width=3,
             pickable=True,
+        ),
+        # Central city text label "LUCKNOW"
+        pdk.Layer(
+            "TextLayer",
+            data=pd.DataFrame([{"lon": hub_lon, "lat": hub_lat - 0.007, "text": "LUCKNOW"}]),
+            get_position=["lon", "lat"],
+            get_text="text",
+            get_color=[255, 255, 255, 240],
+            get_size=16,
+            get_alignment_baseline="'top'",
+            get_text_anchor="'middle'",
         ),
         # The station pollution column needles
         pdk.Layer(
@@ -552,30 +623,40 @@ with col_right:
             get_fill_color="color",
             pickable=True,
             auto_highlight=True,
+        ),
+        # Station labels
+        pdk.Layer(
+            "TextLayer",
+            data=df,
+            get_position=["lon", "lat"],
+            get_text="station",
+            get_color=[156, 163, 175, 220],
+            get_size=11,
+            get_pixel_offset=[0, -16],
+            get_alignment_baseline="'bottom'",
+            get_text_anchor="'middle'",
+        ),
+        # The OR-Tools VRP Dispatch 3D Parabolic Arcs
+        pdk.Layer(
+            "ArcLayer",
+            data=df_routes,
+            get_source_position="start",
+            get_target_position="end",
+            get_source_color=[0, 229, 255, 240], # Radiant cyan source (Depot)
+            get_target_color=[244, 63, 94, 240], # Radiant coral-red target (Station)
+            get_width=3.5,                        # Bold, prominent 3D arcs
+            get_height=0.45,
+            get_tilt=10,
+            pickable=True,
+            auto_highlight=True,
         )
     ]
-
-    # The OR-Tools VRP Dispatch Parabolic Arcs
-    if not df_routes.empty:
-        layers.append(
-            pdk.Layer(
-                "ArcLayer",
-                data=df_routes,
-                get_source_position="start",
-                get_target_position="end",
-                get_source_color=[0, 229, 255, 200], # Glowing cyan source (Depot)
-                get_target_color=[220, 38, 38, 255],   # Warning red target (Station)
-                get_width=2,                           # Sleek, thin professional arcs
-                pickable=True,
-                auto_highlight=True,
-            )
-        )
 
     st.pydeck_chart(
         pdk.Deck(
             map_style=pdk.map_styles.CARTO_DARK,
             initial_view_state=pdk.ViewState(
-                latitude=26.8467, longitude=80.9462, zoom=11.6, pitch=48, bearing=-15
+                latitude=26.8520, longitude=80.9480, zoom=11.1, pitch=46, bearing=-10
             ),
             layers=layers,
             tooltip={

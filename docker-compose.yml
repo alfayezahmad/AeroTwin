@@ -19,6 +19,7 @@ services:
     env_file:
       - .env
     volumes:
+      - ./backend:/app
       - ./data:/app/data
     depends_on:
       - mqtt
@@ -32,6 +33,8 @@ services:
       - "8501:8501"
     environment:
       - BACKEND_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
     depends_on:
       - backend
     restart: unless-stopped

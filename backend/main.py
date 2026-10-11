@@ -29,7 +29,7 @@ app.add_middleware(
 
 ml_engine = AeroTwinMLEngine()
 
-HUB_COORDS = [26.8467, 80.9462] # Municipal Hub
+HUB_COORDS = [26.8415, 80.9415] # Central Municipal Fleet Command (Hazratganj / Charbagh Hub)
 SIMULATE_SPIKE_ACTIVE = False
 
 def publish_mqtt_command(payload: dict):
@@ -122,7 +122,19 @@ def get_spatial_forecast():
     avg_pm25 = round(sum(n["pm25"] for n in processed_nodes) / len(processed_nodes), 1)
 
     # 4. OR-Tools VRP Optimization
-    routes = calculate_optimal_dispatch(HUB_COORDS, critical_nodes)
+    # Generate optimal dispatch routing arcs for critical nodes, or baseline preventative fleet patrol vectors
+    target_nodes = critical_nodes if critical_nodes else processed_nodes
+    routes = calculate_optimal_dispatch(HUB_COORDS, target_nodes)
+    if not routes or len(routes) < len(processed_nodes):
+        routes = [
+            {
+                "start": [HUB_COORDS[1], HUB_COORDS[0]],
+                "end": [n["lon"], n["lat"]],
+                "station": n["station"],
+                "pm25": n["pm25"]
+            }
+            for n in processed_nodes
+        ]
 
     # 5. Return JSON payload
     return {
