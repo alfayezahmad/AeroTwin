@@ -125,33 +125,49 @@ AeroTwin autonomously translates continuous atmospheric data into discrete legal
 
 ## Hardware & Edge Specification
 
-AeroTwin transcends digital software by maintaining physical authority over municipal hardware. The physical hardware mock-up utilizes a highly cost-effective **ESP32 Edge Microcontroller** to simulate field actuators.
+AeroTwin transcends digital software by maintaining physical authority over municipal hardware. The platform provides both a native embedded C firmware implementation for production hardware and a Python simulation daemon for edge emulation.
 
-- **Edge Compute**: The ESP32 runs a lightweight MicroPython/Python MQTT daemon.
-- **Communication Protocol**: IEEE 802.11 b/g/n Wi-Fi bridging into a local `Mosquitto` MQTT broker pub/sub architecture.
-- **Physical Actuation Circuit**: 
-  - GPIO PWM Channel 1 -> Controls a 90° generic servo simulating a high-pressure municipal water main valve.
-  - GPIO PWM Channel 2 -> Controls a 180° sweeping servo simulating an oscillating anti-smog mist cannon.
-- **Fault Tolerance**: In the event of cloud-disconnect, the edge node retains local buffering and automatically triggers a safe `standby_mode` (halting active mitigation).
+### 1. Native Embedded Firmware (`esp32_edge_actuator/`)
+- **Microcontroller**: ESP32-S3 (ESP32-S3-N16R8 CAM Module).
+- **Firmware Framework**: Espressif ESP-IDF (C) + FreeRTOS preemptive multitasking.
+- **Networking**: IEEE 802.11 b/g/n Wi-Fi with automatic reconnection logic and event-driven IP provisioning.
+- **Messaging**: Native `esp_mqtt_client` subscribed to `aerotwin/commands/dispatch`.
+- **Physical Actuation Circuit**:
+  - **Onboard WS2812 NeoPixel RGB LED (GPIO 48)**: Driven via RMT peripheral (`led_strip` component). Illuminates RED during active mitigation cycles.
+  - **L293D Dual Motor Driver (GPIO 4 & GPIO 5)**: Drives high-pressure water sprinkler pump and mist cannon motors.
+- **Deterministic Mitigation Routine**: Upon detecting Stage III/IV statutory alerts, a dedicated FreeRTOS worker task (`trigger_mitigation_task`) engages the motor driver and status indicator for a 10-second mitigation cycle without blocking the MQTT communication thread.
+
+### 2. Edge Software Daemon (`edge_actuator.py`)
+- Python-based simulation daemon with `gpiozero` mock fallback for testing the closed-loop MQTT downlink on laptops, workstations, or Raspberry Pi single-board computers without physical hardware connected.
 
 ---
 
 ## Local Development Setup
 
-To run the full AeroTwin digital twin locally:
-
-1. Clone the repository and add your Gemini API key:
+### 1. Configure Environment
+Copy the example environment file and insert your Google Gemini API key:
 ```bash
-echo "GEMINI_API_KEY=your_key_here" > .env
+cp .env.example .env
+# Edit .env and set GEMINI_API_KEY=your_key_here
 ```
-2. Spin up the containerized microservices:
+*(Note: If no API key is provided, the backend automatically provides a resilient synthetic executive briefing).*
+
+### 2. Spin Up Containerized Microservices
+Launch the complete stack (Mosquitto MQTT Broker, FastAPI Inference Engine, and Streamlit Spatial Dashboard):
 ```bash
 docker compose up -d --build
 ```
-3. Access the Live Command Center:
-Navigate to `http://localhost:8501` to view the Streamlit UI, trigger spike simulations, and view the live VRP map.
+- **Streamlit Command Center**: [http://localhost:8501](http://localhost:8501)
+- **FastAPI Backend & API Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Mosquitto MQTT Broker**: `localhost:1883`
 
----
+### 3. Flash ESP32-S3 Edge Actuator (Optional Hardware Step)
+To flash the native actuator firmware onto an ESP32-S3 board:
+```bash
+cd esp32_edge_actuator
+idf.py set-target esp32s3
+idf.py build flash monitor
+```
 
 ## Author & Academic Attribution
 

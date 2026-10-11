@@ -30,3 +30,14 @@ pip-delete-this-directory.txt
 .vscode/
 .idea/
 *.swp
+
+# ESP-IDF Firmware Build Artifacts
+esp32_edge_actuator/build/
+esp32_edge_actuator/sdkconfig
+esp32_edge_actuator/sdkconfig.old
+esp32_edge_actuator/dependencies.lock
+esp32_edge_actuator/managed_components/
+esp32_edge_actuator/.cache/
+
+# Temporary Screenshots & Dumps
+Screenshot *.png
