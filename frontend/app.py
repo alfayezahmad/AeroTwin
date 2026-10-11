@@ -24,45 +24,42 @@ if "simulate_spike" not in st.session_state:
     st.session_state["simulate_spike"] = False
 
 with st.sidebar:
-    st.markdown("### 🔧 CYBER-PHYSICAL CONTROLS")
-    st.markdown("<p style='font-size:0.8rem; color:#9ca3af;'>Test closed-loop hardware actuation via MQTT downlink to ESP32-S3 edge node.</p>", unsafe_allow_html=True)
-    
+    st.markdown("### 🔧 SIMULATION CONTROLS")
     col_sb1, col_sb2 = st.columns(2)
     with col_sb1:
         if st.button("⚡ Spike Test", use_container_width=True):
             st.session_state["simulate_spike"] = True
             try:
-                requests.post(f"{BACKEND_URL}/api/simulate_spike", timeout=2)
+                requests.post(f"{BACKEND_URL}/api/simulate_spike", timeout=1)
             except Exception:
                 pass
-            st.toast("Atmospheric PM2.5 Spike Injected (GRAP IV Emergency)! MQTT Downlink Fired.", icon="🚨")
+            st.toast("Atmospheric PM2.5 Spike Injected (GRAP IV Emergency)!", icon="🚨")
             time.sleep(0.5)
             st.rerun()
     with col_sb2:
         if st.button("🔄 Reset Live", use_container_width=True):
             st.session_state["simulate_spike"] = False
             try:
-                requests.post(f"{BACKEND_URL}/api/reset_spike", timeout=2)
+                requests.post(f"{BACKEND_URL}/api/reset_spike", timeout=1)
             except Exception:
                 pass
-            st.toast("Restored Live Sensor Baseline Telemetry! Edge Actuators on Standby.", icon="✅")
+            st.toast("Restored Live Sensor Baseline Telemetry!", icon="✅")
             time.sleep(0.5)
             st.rerun()
-
-    st.markdown("<hr style='margin: 1rem 0 !important;'>", unsafe_allow_html=True)
-    st.markdown("<div style='font-size:0.75rem; color:#9ca3af;'><b>MQTT BROKER:</b> aerotwin-mqtt (1883)<br/><b>TOPIC:</b> aerotwin/commands/dispatch<br/><b>ACTUATOR:</b> ESP32-S3 (WS2812 + L293D)</div>", unsafe_allow_html=True)
 
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
     
     html, body, [class*="css"] { font-family: 'Inter', sans-serif !important; }
     
+    /* Restore the header (and hamburger) but make it transparent and hide the deploy button */
     footer {visibility: hidden;}
     header {background-color: transparent !important;}
     .stDeployButton {display: none !important;}
     
+    /* Dramatically reduce the top whitespace */
     .block-container {
         padding-top: 1.5rem !important;
         padding-bottom: 1rem !important;
@@ -70,139 +67,86 @@ st.markdown(
     
     /* Sleeker Metric Cards */
     div[data-testid="metric-container"] {
-        background: #0d1527;
-        border: 1.5px solid #0284c7;
-        padding: 12px 16px;
-        border-radius: 8px;
+        background: linear-gradient(90deg, rgba(0, 229, 255, 0.08) 0%, rgba(0,0,0,0) 100%);
+        border-left: 3px solid #00e5ff;
+        padding: 10px 15px;
+        border-radius: 4px;
     }
     div[data-testid="metric-container"] label {
-        font-weight: 600 !important;
-        color: #94a3b8 !important;
-        font-size: 0.72rem !important;
+        font-weight: 500 !important;
+        color: #6b7280 !important;
+        font-size: 0.75rem !important;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 1px;
     }
-    .stDataFrame { border: 1px solid #1e293b !important; border-radius: 8px !important; }
-    hr { border-color: #1e293b !important; margin: 1.5rem 0 !important; }
-    div[data-testid="stMetricValue"] { font-size: 1.55rem !important; }
+    .stDataFrame { border: 1px solid #1e1e24 !important; border-radius: 4px !important; }
+    hr { border-color: #1e1e24 !important; margin: 1.5rem 0 !important; }
+    div[data-testid="stMetricValue"] { font-size: 1.5rem !important; }
     
-    /* Uniform Pill Button Styling */
+    /* Neon Cyber Button Styling */
     div[data-testid="stButton"] button {
-        background: linear-gradient(135deg, rgba(0, 229, 255, 0.12) 0%, rgba(2, 132, 199, 0.22) 100%) !important;
-        color: #e0f2fe !important;
+        background: linear-gradient(90deg, rgba(0,229,255,0.8) 0%, rgba(0,123,181,0.8) 100%) !important;
+        color: #ffffff !important;
         border: 1px solid #00e5ff !important;
-        border-radius: 9999px !important;
-        padding: 7px 18px !important;
-        font-size: 0.8rem !important;
+        border-radius: 4px !important;
         font-weight: 600 !important;
-        letter-spacing: 0.5px !important;
+        letter-spacing: 1px !important;
         text-transform: uppercase !important;
-        box-shadow: 0 0 12px rgba(0, 229, 255, 0.15) !important;
-        transition: all 0.25s ease !important;
+        transition: all 0.3s ease !important;
     }
     div[data-testid="stButton"] button:hover {
-        background: linear-gradient(135deg, rgba(0, 229, 255, 0.25) 0%, rgba(2, 132, 199, 0.4) 100%) !important;
-        box-shadow: 0 0 18px rgba(0, 229, 255, 0.5) !important;
-        border-color: #ffffff !important;
-        transform: translateY(-1px);
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.6) !important;
+        border: 1px solid #ffffff !important;
     }
     
     /* Tactical Telemetry Card Grid */
     .tactical-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 12px;
+        gap: 10px;
+        margin-bottom: 10px;
     }
     .tactical-card {
-        background: #0d1527;
-        border-radius: 8px;
-        padding: 12px 14px;
+        background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(15, 23, 42, 0.85) 100%);
+        border: 1px solid #374151;
+        border-radius: 6px;
+        padding: 10px 12px;
         box-sizing: border-box;
-        transition: all 0.2s ease;
+        transition: border-color 0.2s ease;
     }
     .tactical-card:hover {
-        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);
+        border-color: #00e5ff;
     }
     .tactical-label {
         font-size: 0.68rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        color: #94a3b8;
+        color: #9ca3af;
         margin-bottom: 4px;
     }
     .tactical-val {
-        font-size: 1.55rem;
+        font-size: 1.45rem;
         font-weight: 700;
-        color: #f8fafc;
+        color: #f9fafb;
         font-family: 'Inter', sans-serif;
         line-height: 1.2;
         letter-spacing: -0.5px;
     }
     .tactical-sub {
         font-size: 0.72rem;
-        color: #94a3b8;
+        color: #9ca3af;
         font-weight: 400;
     }
-    
-    /* Uniform Pill Badge Styling */
     .tactical-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        margin-top: 8px;
-        padding: 4px 12px;
-        border-radius: 9999px;
-        font-size: 0.72rem;
+        display: inline-block;
+        margin-top: 6px;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 0.68rem;
         font-weight: 600;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
         white-space: nowrap;
-        line-height: 1.2;
-        box-sizing: border-box;
-    }
-    .badge-cyan {
-        background: rgba(0, 229, 255, 0.12);
-        color: #38bdf8;
-        border: 1px solid rgba(0, 229, 255, 0.45);
-    }
-    .badge-green {
-        background: rgba(16, 185, 129, 0.12);
-        color: #34d399;
-        border: 1px solid rgba(16, 185, 129, 0.45);
-    }
-    .badge-amber {
-        background: rgba(245, 158, 11, 0.15);
-        color: #fbbf24;
-        border: 1px solid rgba(245, 158, 11, 0.55);
-    }
-    .badge-red {
-        background: rgba(239, 68, 68, 0.15);
-        color: #f87171;
-        border: 1px solid rgba(239, 68, 68, 0.55);
-    }
-    
-    /* High-Contrast Monospace Runtime Card */
-    .runtime-card {
-        background: rgba(234, 88, 12, 0.05);
-        border: 1.5px solid #ea580c;
-        border-radius: 8px;
-        padding: 12px 14px;
-        font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-        font-size: 0.72rem;
-        line-height: 1.6;
-        margin-top: 10px;
-        box-sizing: border-box;
-    }
-    .runtime-tag {
-        color: #f59e0b;
-        font-weight: 700;
-        margin-right: 6px;
-    }
-    .runtime-desc {
-        color: #e5e7eb;
-        font-weight: 400;
     }
     </style>
 """,
@@ -299,12 +243,14 @@ def generate_standalone_telemetry(simulate_spike: bool = False) -> dict:
             timeseries_time, filled_pm25 = generate_synthetic_timeseries(station_name)
             display_pm25 = filled_pm25[-1] if filled_pm25 else 185.0
             co_val = round(1.2 * prof["co_scale"], 2)
-            temp, wind, wind_dir = 28.0, 7.5, 160.0
-
+            temp = 28.5
+            wind = 6.2
+            wind_dir = 195.0
+            
         if simulate_spike:
-            display_pm25 = round(display_pm25 + 230.0 + (lat * 20 % 50), 1)
-            filled_pm25 = [round(v + 180.0, 1) for v in filled_pm25]
-
+            display_pm25 = round(random.uniform(330.0, 365.0), 1)
+            filled_pm25[-3:] = [280.0, 310.0, display_pm25]
+            
         grap_stage, action = assign_grap_stage(display_pm25)
         results.append({
             "station": station_name,
@@ -313,42 +259,42 @@ def generate_standalone_telemetry(simulate_spike: bool = False) -> dict:
             "typology": prof["typology"],
             "pm25": display_pm25,
             "live_co": co_val,
-            "live_temp": temp if 'temp' in locals() and temp is not None else 28.0,
-            "live_wind": wind if 'wind' in locals() and wind is not None else 6.0,
-            "wind_dir": wind_dir if 'wind_dir' in locals() and wind_dir is not None else 180.0,
+            "live_temp": temp if temp is not None else 28.0,
+            "live_wind": wind if wind is not None else 6.0,
+            "wind_dir": wind_dir if wind_dir is not None else 180.0,
             "timeseries_time": timeseries_time,
             "timeseries_pm25": filled_pm25,
             "grap_stage": grap_stage,
             "prescribed_action": action,
-            "needs_dispatch": bool(display_pm25 > 120.0),
+            "needs_dispatch": bool(display_pm25 > 60.0),
         })
 
-    avg_pm25 = round(sum(r["pm25"] for r in results) / len(results), 1)
-    critical_nodes = [r for r in results if r["needs_dispatch"]]
-    
-    hub_coords = [26.8415, 80.9415] # Central Municipal Fleet Command (Hazratganj / Charbagh Hub)
+    avg_pm25 = round(sum(n["pm25"] for n in results) / len(results), 1)
+    critical_nodes = [n for n in results if n["needs_dispatch"]]
+    if not critical_nodes:
+        critical_nodes = sorted(results, key=lambda n: n["pm25"], reverse=True)[:2]
+        
+    hub_coords = [26.8467, 80.9462] # [lat, lon]
     hub_lon, hub_lat = hub_coords[1], hub_coords[0]
     
     routes = []
-    for node in results:
+    for node in critical_nodes:
         routes.append({
             "start": [hub_lon, hub_lat],
-            "end": [node["lon"], node["lat"]],
-            "station": node["station"],
-            "pm25": node["pm25"]
+            "end": [node["lon"], node["lat"]]
         })
         
     if simulate_spike:
         shap = {
             "Industrial Thermal Flux": 38.2,
-            "Boundary Layer Inversion": 29.5,
+            "Boundary Layer Height": 29.5,
             "Traffic Congestion Index": 18.6,
             "Wind Advection (Downwind)": 13.7
         }
     else:
         shap = {
             "Wind Advection (Downwind)": 36.4,
-            "Boundary Layer Inversion": 28.1,
+            "Boundary Layer Height": 28.1,
             "Traffic Congestion Index": 20.3,
             "Ambient Humidity": 15.2
         }
@@ -365,6 +311,11 @@ def generate_standalone_telemetry(simulate_spike: bool = False) -> dict:
             "lon": hub_lon,
             "name": "Central Municipal Depot",
         },
+        "ibm_infrastructure": {
+            "ibm_mode": "Red Hat OpenShift & Watsonx (Autonomous Twin)",
+            "storage": "Cloud-Native Ledger & Time-Series Data Lake",
+            "actuation": "Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon"
+        }
     }
 
 
@@ -393,75 +344,80 @@ df = pd.DataFrame(nodes)
 mean_pm25 = data["city_mean_pm25"]
 active_dispatches = sum(1 for n in nodes if n["needs_dispatch"])
 inference_latency = random.randint(45, 85)
+ibm_infra = data.get("ibm_infrastructure", {})
 
 # Create main functional zones (30% Left Rail, 70% Right Canvas)
-col_left, col_right = st.columns([3, 7], gap="large")
+col_left, col_right = st.columns([3, 7])
 
 with col_left:
     st.markdown("<h4 style='font-weight:400; color:#e5e7eb;'>TACTICAL TELEMETRY</h4>", unsafe_allow_html=True)
     
     # Dynamic styling based on PM2.5 and dispatch thresholds
-    is_spiked = bool(st.session_state.get("simulate_spike", False) or mean_pm25 >= 120)
-    
-    if mean_pm25 >= 350:
-        pm_card_border = "#ef4444"
-        pm_badge_class = "badge-red"
+    if mean_pm25 >= 450:
+        pm_border = "#ef4444"
+        pm_badge_style = "background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.5);"
         pm_badge_text = "⚡ GRAP IV (Emergency)"
     elif mean_pm25 >= 120:
-        pm_card_border = "#f59e0b"
-        pm_badge_class = "badge-amber"
+        pm_border = "#f59e0b"
+        pm_badge_style = "background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.5);"
         pm_badge_text = "⚠️ GRAP III (Severe)"
     else:
-        pm_card_border = "#0284c7"
-        pm_badge_class = "badge-cyan"
+        pm_border = "#00e5ff"
+        pm_badge_style = "background: rgba(0, 229, 255, 0.15); color: #67e8f9; border: 1px solid rgba(0, 229, 255, 0.4);"
         pm_badge_text = "● Normal Baseline"
 
-    if is_spiked:
-        dispatch_badge_class = "badge-red"
-        dispatch_badge_text = "🚨 5 Cannons Active"
+    if active_dispatches > 0:
+        dispatch_border = "#f59e0b"
+        dispatch_badge_style = "background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.5);"
+        dispatch_badge_text = f"🚛 {active_dispatches} Cannons Active"
     else:
-        dispatch_badge_class = "badge-amber"
-        dispatch_badge_text = "🛢️ 5 Cannons Active"
+        dispatch_border = "#10b981"
+        dispatch_badge_style = "background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);"
+        dispatch_badge_text = "✓ Depot Standby"
 
     telemetry_cards_html = f"""
     <div class="tactical-grid">
-        <div class="tactical-card" style="border: 1.5px solid {pm_card_border};">
+        <div class="tactical-card" style="border-left: 3px solid {pm_border};">
             <div class="tactical-label">Pred. Mean PM2.5</div>
             <div class="tactical-val">{mean_pm25} <span class="tactical-sub">µg/m³</span></div>
-            <span class="tactical-badge {pm_badge_class}">{pm_badge_text}</span>
+            <span class="tactical-badge" style="{pm_badge_style}">{pm_badge_text}</span>
         </div>
-        <div class="tactical-card" style="border: 1.5px solid #0284c7;">
+        <div class="tactical-card" style="border-left: 3px solid #10b981;">
             <div class="tactical-label">Active Sensors</div>
             <div class="tactical-val">{len(df)} <span class="tactical-sub">/ 5 nodes</span></div>
-            <span class="tactical-badge badge-green">● 100% Online</span>
+            <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">● 100% Online</span>
         </div>
-        <div class="tactical-card" style="border: 1.5px solid #f59e0b;">
+        <div class="tactical-card" style="border-left: 3px solid {dispatch_border};">
             <div class="tactical-label">Fleet Dispatches</div>
-            <div class="tactical-val">5 <span class="tactical-sub">units</span></div>
-            <span class="tactical-badge {dispatch_badge_class}">{dispatch_badge_text}</span>
+            <div class="tactical-val">{active_dispatches} <span class="tactical-sub">units</span></div>
+            <span class="tactical-badge" style="{dispatch_badge_style}">{dispatch_badge_text}</span>
         </div>
-        <div class="tactical-card" style="border: 1.5px solid #0284c7;">
+        <div class="tactical-card" style="border-left: 3px solid #00e5ff;">
             <div class="tactical-label">Cloud Engine</div>
-            <div class="tactical-val" style="font-size: 1.35rem; padding-top: 2px;">IBM Watsonx</div>
-            <span class="tactical-badge badge-green">✓ Trustworthy AI</span>
+            <div class="tactical-val" style="font-size: 1.15rem; padding-top: 3px;">IBM Watsonx</div>
+            <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">✓ Trustworthy AI</span>
         </div>
     </div>
-    <div class="tactical-card" style="border: 1.5px solid #0284c7; margin-bottom: 10px;">
+    <div class="tactical-card" style="border-left: 3px solid #00e5ff; margin-bottom: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <div class="tactical-label">ST-GNN Inference Latency</div>
-                <div class="tactical-val" style="font-size: 1.35rem;">{inference_latency} <span class="tactical-sub">ms</span></div>
+                <div class="tactical-val" style="font-size: 1.25rem;">{inference_latency} <span class="tactical-sub">ms</span></div>
             </div>
-            <span class="tactical-badge badge-cyan">⚡ Real-Time Compute</span>
+            <span class="tactical-badge" style="background: rgba(0, 229, 255, 0.15); color: #67e8f9; border: 1px solid rgba(0, 229, 255, 0.4);">⚡ Real-Time Compute</span>
         </div>
-    </div>
-    <div class="runtime-card">
-        <div style="margin-bottom: 3px;"><span class="runtime-tag">IBM RUNTIME:</span> <span class="runtime-desc">Red Hat OpenShift & Watsonx (Autonomous Twin)</span></div>
-        <div style="margin-bottom: 3px;"><span class="runtime-tag">STORAGE:</span> <span class="runtime-desc">Cloud-Native Ledger & Time-Series Data Lake</span></div>
-        <div><span class="runtime-tag">ACTUATION:</span> <span class="runtime-desc">Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon</span></div>
     </div>
     """
     st.markdown(telemetry_cards_html, unsafe_allow_html=True)
+    
+    # IBM Infrastructure Status Banner
+    st.markdown(f"""
+    <div style="background: rgba(255, 153, 0, 0.08); border-left: 3px solid #ff9900; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 0.75rem; color: #d1d5db; margin-top: 10px;">
+        <span style="color:#ff9900; font-weight:bold;">IBM RUNTIME:</span> {ibm_infra.get('ibm_mode', 'Red Hat OpenShift & Watsonx (Autonomous Twin)')} <br/>
+        <span style="color:#ff9900; font-weight:bold;">STORAGE:</span> {ibm_infra.get('storage', 'Cloud-Native Ledger & Time-Series Data Lake')} <br/>
+        <span style="color:#ff9900; font-weight:bold;">ACTUATION:</span> {ibm_infra.get('actuation', 'Eclipse Mosquitto MQTT & ESP32-S3 Edge Cannon')}
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("<hr style='margin: 1rem 0 !important;'>", unsafe_allow_html=True)
     
@@ -469,14 +425,16 @@ with col_left:
     st.markdown("### AUTONOMOUS AGENT BRIEFING")
     briefing_rendered = False
     try:
-        agent_res = requests.get(f"{BACKEND_URL}/api/agent_briefing", timeout=2)
+        agent_res = requests.get(
+            f"{BACKEND_URL}/api/agent_briefing", timeout=2
+        )
         if agent_res.status_code == 200:
             agent_json = agent_res.json()
             briefing_text = agent_json.get("briefing", "")
             if briefing_text and "Agent Offline" not in briefing_text and "Agent error" not in briefing_text:
                 st.markdown(f"""
                 <div style="background-color: rgba(0, 229, 255, 0.05); border-left: 3px solid #00e5ff; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #e5e7eb; margin-bottom: 10px; line-height: 1.5;">
-                    <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_COMMAND_AI // GEMINI DIAGNOSTIC UPLINK</div>
+                    <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_CHIEF_AI // GEMINI DIAGNOSTIC UPLINK</div>
                     {briefing_text}
                 </div>
                 """, unsafe_allow_html=True)
@@ -493,14 +451,14 @@ with col_left:
         grap_lvl = top_node.get("grap_stage", "Stage I")
         w_wind = top_node.get("live_wind", 6.2)
         heuristic_briefing = (
-            f"COMMISSIONER BRIEFING: PyTorch Geometric ST-GNN indicates particulate aggregation in {worst_st} "
+            f"COMMISSIONER BRIEFING: PyTorch ST-GNN models indicate particulate aggregation in {worst_st} "
             f"at {worst_val:.1f} µg/m³, driven by downwind boundary-layer advection ({w_wind} km/h). "
-            f"Statutory CAQM GRAP {grap_lvl} mandates have been enacted with '{worst_act.title()}' actively broadcast. "
-            f"Google OR-Tools VRP mist-cannon fleet routes and ESP32-S3 edge actuator PWM downlinks have been synchronized to intercept the plume."
+            f"Statutory CAQM GRAP {grap_lvl} mandates have been enacted across the corridor with '{worst_act.title()}' actively broadcast. "
+            f"OR-Tools VRP mist-cannon fleet routes and edge actuator PWM downlinks have been synchronized to intercept the downwind plume."
         )
         st.markdown(f"""
         <div style="background-color: rgba(0, 229, 255, 0.05); border-left: 3px solid #00e5ff; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #e5e7eb; margin-bottom: 10px; line-height: 1.5;">
-            <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_COMMAND_AI // GEMINI DIAGNOSTIC UPLINK</div>
+            <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_CHIEF_AI // TRUSTWORTHY AI UPLINK</div>
             {heuristic_briefing}
         </div>
         """, unsafe_allow_html=True)
@@ -512,7 +470,7 @@ with col_left:
     display_df = df[["station", "pm25", "grap_stage", "prescribed_action"]].copy()
     display_df["prescribed_action"] = display_df["prescribed_action"].str.replace("_", " ").str.title()
     
-    table_html = "<div style='background-color: #0e1117; border: 1px solid #1e1e24; border-radius: 6px; padding: 10px; overflow-x: auto;'><table style='width:100%; border-collapse: collapse; font-size: 0.80rem; color: #d1d5db; font-family: Inter, sans-serif; white-space: nowrap;'>"
+    table_html = "<div style='background-color: #0e1117; border: 1px solid #1e1e24; border-radius: 6px; padding: 10px;'><table style='width:100%; border-collapse: collapse; font-size: 0.80rem; color: #d1d5db; font-family: Inter, sans-serif;'>"
     table_html += "<tr style='border-bottom: 1px solid #374151; color: #9ca3af; text-transform: uppercase;'><th style='text-align:left; padding:8px 4px;'>Node</th><th style='text-align:left; padding:8px 4px;'>PM2.5</th><th style='text-align:left; padding:8px 4px;'>Status</th><th style='text-align:left; padding:8px 4px;'>Intervention</th></tr>"
     for _, row in display_df.iterrows():
         status = row['grap_stage']
@@ -530,37 +488,23 @@ with col_left:
 with col_right:
     st.markdown("<h4 style='font-weight:400; color:#e5e7eb;'>SPATIAL POLLUTION TOPOLOGY & FLEET ROUTING</h4>", unsafe_allow_html=True)
     
+    # 3D PyDeck - SLEEK NEEDLES FIX
     def get_color(val):
-        if val > 350:
-            return [138, 43, 226, 255] # Purple (Severe+)
-        elif val > 250:
-            return [220, 38, 38, 255]  # Crimson Red (Severe)
+        if val > 250:
+            return [138, 43, 226, 255]
         elif val > 120:
-            return [245, 158, 11, 255] # Amber (Very Poor)
+            return [220, 38, 38, 255]
         elif val > 60:
-            return [234, 179, 8, 255]  # Yellow (Poor)
-        return [0, 229, 255, 255]      # Cyan (Normal)
+            return [245, 158, 11, 255]
+        return [0, 229, 255, 255]
 
     df["color"] = df["pm25"].apply(get_color)
-    df["elevation"] = df["pm25"] * 25
+    df["elevation"] = df["pm25"] * 30
 
-    # Hub Coordinates (Hazratganj / Charbagh Municipal Fleet Command)
-    hub_info = data.get("dispatch_hub", {"lat": 26.8415, "lon": 80.9415, "name": "Central Municipal Depot"})
-    hub_lat = hub_info.get("lat", 26.8415)
-    hub_lon = hub_info.get("lon", 80.9415)
-
-    routes_data = data.get("routes", [])
-    if not routes_data or len(routes_data) < len(nodes):
-        routes_data = [
-            {
-                "start": [hub_lon, hub_lat],
-                "end": [n["lon"], n["lat"]],
-                "station": n["station"],
-                "pm25": n.get("pm25", 90.0)
-            }
-            for n in nodes
-        ]
-    df_routes = pd.DataFrame(routes_data)
+    if "routes" in data and data["routes"]:
+        df_routes = pd.DataFrame(data["routes"])
+    else:
+        df_routes = pd.DataFrame()
 
     # Generate graph edges connecting all 5 stations (Fully Connected Graph)
     graph_edges = []
@@ -571,10 +515,12 @@ with col_right:
         })
     df_graph_edges = pd.DataFrame(graph_edges)
 
+    # Central Municipal Depot Hub Beacon
+    hub_info = data.get("dispatch_hub", {"lat": 26.8467, "lon": 80.9462, "name": "Central Municipal Depot"})
     df_hub = pd.DataFrame([{
-        "lon": hub_lon,
-        "lat": hub_lat,
-        "name": hub_info.get("name", "Central Municipal Depot")
+        "lon": hub_info["lon"],
+        "lat": hub_info["lat"],
+        "name": "Central Municipal Depot"
     }])
 
     layers = [
@@ -584,33 +530,18 @@ with col_right:
             data=df_graph_edges,
             get_source_position="start",
             get_target_position="end",
-            get_color=[0, 229, 255, 60], # Low opacity glowing cyan
+            get_color=[0, 229, 255, 70], # Low opacity cyan
             get_width=2,
             pickable=False,
         ),
-        # Central Municipal Fleet Depot Marker (Glowing Ring)
+        # Central Municipal Fleet Depot Marker
         pdk.Layer(
             "ScatterplotLayer",
             data=df_hub,
             get_position=["lon", "lat"],
-            get_color=[245, 158, 11, 240], # Amber beacon
-            get_radius=200,
-            stroked=True,
-            filled=True,
-            get_line_color=[255, 237, 213, 255],
-            get_line_width=3,
+            get_color=[255, 170, 0, 240], # Amber beacon
+            get_radius=180,
             pickable=True,
-        ),
-        # Central city text label "LUCKNOW"
-        pdk.Layer(
-            "TextLayer",
-            data=pd.DataFrame([{"lon": hub_lon, "lat": hub_lat - 0.007, "text": "LUCKNOW"}]),
-            get_position=["lon", "lat"],
-            get_text="text",
-            get_color=[255, 255, 255, 240],
-            get_size=16,
-            get_alignment_baseline="'top'",
-            get_text_anchor="'middle'",
         ),
         # The station pollution column needles
         pdk.Layer(
@@ -623,44 +554,34 @@ with col_right:
             get_fill_color="color",
             pickable=True,
             auto_highlight=True,
-        ),
-        # Station labels
-        pdk.Layer(
-            "TextLayer",
-            data=df,
-            get_position=["lon", "lat"],
-            get_text="station",
-            get_color=[156, 163, 175, 220],
-            get_size=11,
-            get_pixel_offset=[0, -16],
-            get_alignment_baseline="'bottom'",
-            get_text_anchor="'middle'",
-        ),
-        # The OR-Tools VRP Dispatch 3D Parabolic Arcs
-        pdk.Layer(
-            "ArcLayer",
-            data=df_routes,
-            get_source_position="start",
-            get_target_position="end",
-            get_source_color=[0, 229, 255, 240], # Radiant cyan source (Depot)
-            get_target_color=[244, 63, 94, 240], # Radiant coral-red target (Station)
-            get_width=3.5,                        # Bold, prominent 3D arcs
-            get_height=0.45,
-            get_tilt=10,
-            pickable=True,
-            auto_highlight=True,
         )
     ]
+
+    # The OR-Tools VRP Dispatch Parabolic Arcs
+    if not df_routes.empty:
+        layers.append(
+            pdk.Layer(
+                "ArcLayer",
+                data=df_routes,
+                get_source_position="start",
+                get_target_position="end",
+                get_source_color=[0, 229, 255, 200], # Glowing cyan source (Depot)
+                get_target_color=[220, 38, 38, 255],   # Warning red target (Station)
+                get_width=2,                           # Sleek, thin professional arcs
+                pickable=True,
+                auto_highlight=True,
+            )
+        )
 
     st.pydeck_chart(
         pdk.Deck(
             map_style=pdk.map_styles.CARTO_DARK,
             initial_view_state=pdk.ViewState(
-                latitude=26.8520, longitude=80.9480, zoom=11.1, pitch=46, bearing=-10
+                latitude=26.8467, longitude=80.9462, zoom=11.5, pitch=55, bearing=-20
             ),
             layers=layers,
             tooltip={
-                "html": "<div style='font-family:Inter, sans-serif; font-size:12px; color:#ffffff; background:#111827; padding:8px; border:1px solid #374151; border-radius:4px;'><b>{station}</b><br/>Typology: {typology}<br/>PM2.5: {pm25} µg/m³<br/>GRAP: {grap_stage}</div>"
+                "html": "<div style='font-family:Inter; font-size:12px; color:#ffffff;'><b>{station}</b><br/>PM2.5: {pm25} µg/m³<br/>GRAP: {grap_stage}</div>"
             },
         )
     )
@@ -670,7 +591,7 @@ with col_right:
     # 2-Row Chart Layout for the Right Canvas
     
     # ROW 1: Severity Ranking and XAI
-    chart_c1, chart_c2 = st.columns(2, gap="large")
+    chart_c1, chart_c2 = st.columns(2)
     
     with chart_c1:
         st.markdown("<h5 style='font-weight:400; color:#e5e7eb;'>NODE SEVERITY RANKING</h5>", unsafe_allow_html=True)
@@ -682,7 +603,7 @@ with col_right:
             color="pm25",
             color_continuous_scale="Reds",
         )
-        fig.update_traces(texttemplate='<b>%{x}</b> µg/m³', textposition="outside", cliponaxis=False, marker_line_color='#000000', marker_line_width=1, opacity=0.9)
+        fig.update_traces(texttemplate='%{x} µg/m³', textposition="outside", cliponaxis=False)
         fig.update_layout(
             font=dict(family="Inter", size=11, color="#9ca3af"),
             plot_bgcolor="rgba(0,0,0,0)",
@@ -691,7 +612,7 @@ with col_right:
             xaxis=dict(visible=False),
             yaxis=dict(title="", showgrid=False, visible=True, automargin=True),
             coloraxis_showscale=False,
-            bargap=0.45,
+            bargap=0.5,
             height=260,
         )
         fig.update_yaxes(categoryorder="total ascending")
@@ -714,7 +635,7 @@ with col_right:
             color=importance,
             color_continuous_scale=[[0, "#00838f"], [1, "#00e5ff"]]
         )
-        fig_ml.update_traces(texttemplate='<b>%{x:.1f}%</b>', textposition="outside", cliponaxis=False, marker_line_color='#000000', marker_line_width=1, opacity=0.9)
+        fig_ml.update_traces(texttemplate='%{x:.1f}%', textposition="outside", cliponaxis=False)
         fig_ml.update_coloraxes(showscale=False)
         fig_ml.update_layout(
             font=dict(family="Inter", size=11, color="#9ca3af"),
@@ -736,6 +657,7 @@ with col_right:
     # Process the timeseries data into a single Pandas DataFrame
     timeline_records = []
     
+    # Station color mapping matching the SCADA cyan/red gradient aesthetic
     station_colors = {
         "Talkatora": "#00e5ff",      # Cyan
         "Lalbagh": "#14b8a6",        # Teal
@@ -756,6 +678,7 @@ with col_right:
         df_timeline = pd.DataFrame(timeline_records)
         df_timeline["Time"] = pd.to_datetime(df_timeline["Time"])
         
+        # Create a sleek dark-mode line chart
         fig_timeline = px.line(
             df_timeline, 
             x="Time", 
@@ -764,6 +687,7 @@ with col_right:
             color_discrete_map=station_colors
         )
         
+        # Style to match the SCADA military aesthetic
         fig_timeline.update_layout(
             font=dict(family="Inter", size=11, color="#9ca3af"),
             plot_bgcolor="rgba(0,0,0,0)",
@@ -791,6 +715,7 @@ with col_right:
             ),
             height=300,
         )
+        # Apply distinct colored lines for neon aesthetic
         fig_timeline.update_traces(line=dict(width=2.5), line_shape="spline")
         
         st.plotly_chart(fig_timeline, use_container_width=True, config={"displayModeBar": False})
