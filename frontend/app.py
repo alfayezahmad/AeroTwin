@@ -395,10 +395,10 @@ with col_left:
             <div class="tactical-val">{active_dispatches} <span class="tactical-sub">units</span></div>
             <span class="tactical-badge" style="{dispatch_badge_style}">{dispatch_badge_text}</span>
         </div>
-        <div class="tactical-card" style="border-left: 3px solid #00e5ff;">
-            <div class="tactical-label">Cloud Engine</div>
-            <div class="tactical-val" style="font-size: 1.15rem; padding-top: 3px;">IBM Watsonx</div>
-            <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">✓ Trustworthy AI</span>
+        <div class="tactical-card" style="border-left: 3px solid #10b981;">
+            <div class="tactical-label">Edge Actuator</div>
+            <div class="tactical-val" style="font-size: 1.15rem; padding-top: 3px;">ESP32-S3</div>
+            <span class="tactical-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4);">● MQTT Synced</span>
         </div>
     </div>
     <div class="tactical-card" style="border-left: 3px solid #00e5ff; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
@@ -457,7 +457,7 @@ with col_left:
         )
         st.markdown(f"""
         <div style="background-color: rgba(0, 229, 255, 0.05); border-left: 3px solid #00e5ff; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #e5e7eb; margin-bottom: 10px; line-height: 1.5;">
-            <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_CHIEF_AI // TRUSTWORTHY AI UPLINK</div>
+            <div style="color: #00e5ff; font-weight: bold; margin-bottom: 10px;">> AEROTWIN_CHIEF_AI // AUTONOMOUS TWIN DIAGNOSTIC UPLINK</div>
             {heuristic_briefing}
         </div>
         """, unsafe_allow_html=True)
