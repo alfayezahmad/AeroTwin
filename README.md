@@ -48,45 +48,54 @@ AeroTwin solves this by predicting pollution drift *before* it happens and autom
 AeroTwin operates as a closed-loop Cyber-Physical System (CPS), bridging real-time atmospheric telemetry with deep learning forecasting, operations research routing, and physical edge actuation.
 
 ```mermaid
-flowchart LR
-    subgraph INGEST["1. Telemetry Ingestion"]
-        direction TB
-        A["<b>Open-Meteo REST API</b><br/>PM2.5, CO, Temp, Wind"]
-        B["<b>Urban Typology Engine</b><br/>5 Microclimate Profiles"]
-        A --> B
+flowchart TB
+    subgraph LEVEL1["LEVEL 1: CLOUD-NATIVE TELEMETRY INGESTION & TRUSTWORTHY AI (IBM)"]
+        direction LR
+        subgraph INGEST["1. Telemetry Ingestion Engine"]
+            direction TB
+            A["<b>Open-Meteo REST API</b><br/>PM2.5, CO, Temperature, Wind Vectors"]
+            B["<b>Urban Typology Engine</b><br/>5 Microclimate Dispersion Profiles (Lucknow)"]
+            A -->|Hourly Readings| B
+        end
+
+        subgraph AI["2. Deep Learning & Trustworthy AI"]
+            direction TB
+            C["<b>PyTorch Geometric ST-GNN</b><br/>Wind-Modulated Graph Conv (AeroGNN)"]
+            D["<b>Captum XAI Attribution</b><br/>Auditable SHAP Feature Importance (IBM Core)"]
+            C -->|24h Advection Forecast| D
+        end
+
+        INGEST -->|Node & Edge Feature Tensors| AI
     end
 
-    subgraph AI["2. Deep Learning & Trustworthy AI (IBM)"]
-        direction TB
-        C["<b>PyTorch Geometric ST-GNN</b><br/>Wind-Modulated Message Passing"]
-        D["<b>Captum XAI Attribution</b><br/>Auditable SHAP Feature Importance"]
-        C --> D
+    subgraph LEVEL2["LEVEL 2: OPERATIONS RESEARCH & CYBER-PHYSICAL EDGE ACTUATION"]
+        direction LR
+        subgraph COMMAND["3. Operations Research & Tactical Command"]
+            direction TB
+            E["<b>Google OR-Tools VRP</b><br/>Constrained Multi-Vehicle Fleet Routing"]
+            F["<b>Streamlit Command Center</b><br/>3D PyDeck Spatial Digital Twin & SCADA"]
+            E -->|Optimized Dispatch Paths| F
+        end
+
+        subgraph EDGE["4. Closed-Loop Cyber-Physical Actuation"]
+            direction TB
+            G["<b>Mosquitto MQTT Broker</b><br/>Topic: aerotwin/commands/dispatch"]
+            H["<b>ESP32-S3 Edge Hardware Node</b><br/>FreeRTOS Worker & L293D Anti-Smog Cannon Driver"]
+            G -->|QoS-0 Downlink Action Payload| H
+        end
+
+        COMMAND -->|Automated Statutory Downlink| EDGE
     end
 
-    subgraph COMMAND["3. Operations Research & Tactical UI"]
-        direction TB
-        E["<b>Google OR-Tools VRP</b><br/>Constrained Depot Routing"]
-        F["<b>Streamlit Command Center</b><br/>3D PyDeck Spatial Digital Twin"]
-        E --> F
-    end
+    LEVEL1 ==>|Severe Hotspot Trigger: PM2.5 > 120 µg/m³| LEVEL2
 
-    subgraph EDGE["4. Cyber-Physical Actuation"]
-        direction TB
-        G["<b>Mosquitto MQTT Broker</b><br/>Topic: aerotwin/commands/dispatch"]
-        H["<b>ESP32-S3 Edge Node</b><br/>FreeRTOS Task & L293D Mist Cannon"]
-        G --> H
-    end
+    classDef levelBox fill:#0b1329,stroke:#3b82f6,stroke-width:1.5px,color:#93c5fd;
+    classDef ingest fill:#082f49,stroke:#06b6d4,stroke-width:1.5px,color:#f8fafc;
+    classDef aiStyle fill:#2e1065,stroke:#a855f7,stroke-width:1.5px,color:#f8fafc;
+    classDef opsStyle fill:#064e3b,stroke:#10b981,stroke-width:1.5px,color:#f8fafc;
+    classDef edgeStyle fill:#450a0a,stroke:#ef4444,stroke-width:1.5px,color:#f8fafc;
 
-    B -->|Hourly Vectors| C
-    D -->|Critical Nodes > 120 µg/m³| E
-    F -->|Statutory Downlink| G
-
-    classDef default fill:#0f172a,stroke:#334155,color:#e2e8f0,font-size:12px;
-    classDef ingest fill:#0b192c,stroke:#00e5ff,stroke-width:1.5px,color:#f8fafc;
-    classDef aiStyle fill:#1e1b4b,stroke:#818cf8,stroke-width:1.5px,color:#f8fafc;
-    classDef opsStyle fill:#064e3b,stroke:#34d399,stroke-width:1.5px,color:#f8fafc;
-    classDef edgeStyle fill:#3a1010,stroke:#f87171,stroke-width:1.5px,color:#f8fafc;
-
+    class LEVEL1,LEVEL2 levelBox;
     class A,B ingest;
     class C,D aiStyle;
     class E,F opsStyle;
