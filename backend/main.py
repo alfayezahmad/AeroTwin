@@ -32,6 +32,22 @@ ml_engine = AeroTwinMLEngine()
 HUB_COORDS = [26.8467, 80.9462] # Municipal Hub
 SIMULATE_SPIKE_ACTIVE = False
 
+def publish_mqtt_command(payload: dict):
+    """Reliably publish an MQTT dispatch command, attempting Docker network and localhost."""
+    broker_hosts = [os.environ.get("MQTT_BROKER_HOST", "mqtt"), "localhost", "127.0.0.1"]
+    for host in broker_hosts:
+        try:
+            mqtt_publish.single(
+                "aerotwin/commands/dispatch",
+                payload=json.dumps(payload),
+                hostname=host,
+                port=1883
+            )
+            return True
+        except Exception:
+            continue
+    return False
+
 @app.post("/api/simulate_spike")
 def trigger_spike_simulation():
     global SIMULATE_SPIKE_ACTIVE
@@ -39,20 +55,27 @@ def trigger_spike_simulation():
     
     # Fire off an immediate MQTT command for the edge actuator 
     payload = {
-        "grap_stage": "Stage III",
+        "command": "TRIGGER_EMERGENCY_MITIGATION",
+        "grap_stage": "Stage IV",
         "action": "WATER_SPRINKLER_HIGH_DENSITY"
     }
-    try:
-        mqtt_publish.single(
-            "aerotwin/commands/dispatch",
-            payload=json.dumps(payload),
-            hostname="mqtt", # Route through Docker internal network
-            port=1883
-        )
-    except Exception as e:
-        print(f"Warning: Failed to publish MQTT message: {e}")
+    publish_mqtt_command(payload)
         
     return {"status": "success", "message": "Simulated PM2.5 spike engaged. Hardware actuation triggered."}
+
+@app.post("/api/reset_spike")
+def reset_spike_simulation():
+    global SIMULATE_SPIKE_ACTIVE
+    SIMULATE_SPIKE_ACTIVE = False
+    
+    payload = {
+        "command": "STANDBY",
+        "grap_stage": "Normal",
+        "action": "ROUTINE_MONITORING"
+    }
+    publish_mqtt_command(payload)
+        
+    return {"status": "success", "message": "Restored baseline telemetry. Edge actuator returned to standby."}
 
 @app.get("/api/forecast")
 def get_spatial_forecast():
