@@ -77,9 +77,9 @@ flowchart LR
         G --> H
     end
 
-    B --> C
-    D -->|Plume > 120 µg/m³| E
-    D -.->|Statutory Trigger| G
+    B -->|Hourly Vectors| C
+    D -->|Critical Nodes > 120 µg/m³| E
+    F -->|Statutory Downlink| G
 
     classDef default fill:#0f172a,stroke:#334155,color:#e2e8f0,font-size:12px;
     classDef ingest fill:#0b192c,stroke:#00e5ff,stroke-width:1.5px,color:#f8fafc;
