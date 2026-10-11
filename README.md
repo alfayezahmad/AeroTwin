@@ -45,31 +45,70 @@ AeroTwin solves this by predicting pollution drift *before* it happens and autom
 
 ## Architecture Overview
 
+AeroTwin operates as a 4-tier closed-loop Cyber-Physical System (CPS). Environmental telemetry flows from atmospheric sensors through deep learning spatial graphs, translates into operations research vehicle routing, and directly triggers physical field actuation at the edge.
+
 ```mermaid
-graph TD
-    subgraph Data Ingestion & Microclimate Layer
-        A[Open-Meteo REST API] -->|PM2.5, CO, Temp, Wind| B(FastAPI Backend)
-        B --> C{Urban Typology Disaggregation}
+flowchart TB
+    subgraph INGESTION["1. INGESTION & MICROCLIMATE DISAGGREGATION"]
+        direction TB
+        API["<b>Open-Meteo REST APIs</b><br/>PM2.5, CO, Temp, Wind Vectors"]
+        DISAGG["<b>Urban Typology Engine</b><br/>Industrial, Transit, Commercial, Greenbelt"]
+        API -->|Hourly Telemetry Stream| DISAGG
     end
 
-    subgraph Deep Learning Inference Engine
-        C -->|Node Features & Edge Attributes| D[PyTorch Geometric ST-GNN]
-        D -->|Predicted PM2.5 Horizon| E[Captum XAI Feature Attribution]
-    end
-    
-    subgraph Operations Research & Tactical UI
-        E -->|Critical Nodes > 120 µg/m³| F[Google OR-Tools VRP Optimizer]
-        F -->|Optimal Dispatch Routes| G(Streamlit Command Center)
-        E -->|Executive Briefing Request| H[Generative AI Diagnostic Agent]
-        H -->|Actionable Directives| G
+    subgraph ENGINE["2. DEEP LEARNING & TRUSTWORTHY AI (IBM ALIGNED)"]
+        direction TB
+        GNN["<b>PyTorch Geometric ST-GNN</b><br/>Wind-Modulated Message Passing"]
+        XAI["<b>Captum XAI Feature Attribution</b><br/>IBM Trustworthy AI / Real-Time SHAP"]
+        LLM["<b>Generative AI Diagnostic Agent</b><br/>Executive Commissioner Briefings"]
+        DISAGG -->|Graph Node & Edge Tensors| GNN
+        GNN -->|24h Prediction Horizon| XAI
+        XAI -->|Attribution Vectors| LLM
     end
 
-    subgraph Closed-Loop Cyber-Physical Edge Actuation
-        E -->|Statutory GRAP Trigger| I[Mosquitto MQTT Broker]
-        I -->|Downlink JSON Payload| J[ESP32-S3 Edge Node]
-        J -->|FreeRTOS Task & GPIO Signals| K[L293D Motor Driver & WS2812 NeoPixel]
+    subgraph COMMAND["3. OPERATIONS RESEARCH & TACTICAL UI"]
+        direction TB
+        VRP["<b>Google OR-Tools VRP Engine</b><br/>Constrained Municipal Fleet Dispatch"]
+        UI["<b>Streamlit Command Center</b><br/>3D PyDeck Twin & Tactical SCADA Cards"]
+        GNN -->|Critical Nodes > 120 µg/m³| VRP
+        VRP -->|Optimal Routing Arcs| UI
+        LLM -->|Natural Language Briefing| UI
     end
+
+    subgraph ACTUATION["4. CLOSED-LOOP CYBER-PHYSICAL ACTUATION"]
+        direction TB
+        MQTT["<b>Eclipse Mosquitto MQTT Broker</b><br/>Topic: aerotwin/commands/dispatch"]
+        MCU["<b>ESP32-S3 Edge Actuator Node</b><br/>Native ESP-IDF C + FreeRTOS Multitasking"]
+        CIRCUIT["<b>Physical Mitigation Hardware</b><br/>WS2812 RGB LED + L293D Mist Cannon Driver"]
+        MOCK["<b>Software Edge Daemon Fallback</b><br/>edge_actuator.py / GPIOzero Mock"]
+        
+        COMMAND -.->|Autonomous Statutory Downlink| MQTT
+        MQTT -->|Event-Driven Downlink| MCU
+        MQTT -.->|Development Testing| MOCK
+        MCU -->|GPIO 48 / GPIO 4 & 5| CIRCUIT
+    end
+
+    %% Premium Presentation Styling
+    classDef layerIngest fill:#0b192c,stroke:#00e5ff,stroke-width:2px,color:#f8fafc;
+    classDef layerAI fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
+    classDef layerCommand fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+    classDef layerEdge fill:#450a0a,stroke:#f87171,stroke-width:2px,color:#f8fafc;
+
+    class API,DISAGG layerIngest;
+    class GNN,XAI,LLM layerAI;
+    class VRP,UI layerCommand;
+    class MQTT,MCU,CIRCUIT,MOCK layerEdge;
 ```
+
+### Subsystem Technical Matrix
+
+| Subsystem Layer | Primary Technologies | Protocol / Interface | SLA / Latency Target | Functional Responsibility |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Environmental Ingestion** | Open-Meteo REST API, Pandas, NumPy | HTTP / JSON REST | < 1,500 ms | Ingests real-time atmospheric readings and disaggregates regional grid data into local urban typology microclimates. |
+| **2. Deep Learning & Trustworthy AI** | PyTorch Geometric, Captum, Python 3.11 | Tensor Core / CPU Batch | < 85 ms per inference | Wind-advection graph message passing predicts PM2.5 drift 24h ahead; SHAP attribution guarantees transparent, auditable municipal compliance. |
+| **3. Operations Research & UI** | Google OR-Tools, Streamlit, PyDeck, Plotly | WebSocket / Inter-Process | < 500 ms solver time | Solves constrained Integer Linear Programs (ILP) for optimal mitigation vehicle paths from depot; renders 3D digital twin. |
+| **4. Edge Cyber-Physical Actuation** | ESP-IDF (C), FreeRTOS, Eclipse Mosquitto | MQTT (QoS 0/1) / TCP 1883 | < 25 ms downlink trip | Translates statutory GRAP triggers into downlinks; ESP32-S3 FreeRTOS task actuates water mist pumps and RGB status indicators. |
+
 
 ## Mathematical & Algorithmic Foundations
 
